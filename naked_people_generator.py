@@ -26,10 +26,10 @@ class NakedPeopleGenarator:
         dmpls = torch.Tensor(bdata["dmpls"]).to(device)
         num_betas = 10
         num_dmpls = 8
-        bm = BodyModel(bm_path=bm_path, num_betas=num_betas, num_dmpls=num_dmpls, path_dmpl=self.dmpl_path).to(device)
+        bm = BodyModel(bm_path=bm_path, num_betas=num_betas, num_dmpls=num_dmpls, path_dmpl=dmpl_path).to(device)
         faces = c2c(bm.f)
         mv = MeshViewer(width=imw, height=imh, use_offscreen=True, bg_color=bg_color)
-        writer = skvideo.io.FFmpegWriter("outputvideo.mp4",
+        writer = skvideo.io.FFmpegWriter(output_file,
                                     outputdict={"-vcodec":"libx264", "-pix_fmt": "yuv420p"})
 
         for fId in range(0, len(poses), frame_skip):

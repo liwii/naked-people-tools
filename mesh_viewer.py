@@ -41,7 +41,7 @@ class MeshViewer(object):
         self.mat_constructor = pyrender.MetallicRoughnessMaterial
         self.trimesh_to_pymesh = pyrender.Mesh.from_trimesh
 
-        self.scene = pyrender.Scene(bg_color=[0., 1., 0.], ambient_light=(0.3, 0.3, 0.3))
+        self.scene = pyrender.Scene(bg_color=colors[bg_color], ambient_light=(0.3, 0.3, 0.3))
 
         pc = pyrender.PerspectiveCamera(yfov=np.pi / 3.0, aspectRatio=float(width) / height)
         camera_pose = np.eye(4)
