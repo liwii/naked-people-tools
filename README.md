@@ -9,6 +9,7 @@
 - trimesh
 - pytorch
 - scikit-video
+- opencv-contrib-python
 
 ### Data
 - [SMPL+H](https://mano.is.tue.mpg.de/downloads)
