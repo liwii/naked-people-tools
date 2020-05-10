@@ -50,12 +50,12 @@ class MeshViewer(object):
         self.camera_node = self.scene.add(pc, pose=camera_pose, name='pc-camera')
 
         light1 = PointLight(color=np.ones(3), intensity=5.0)
-        self.scene.add(light1, pose=camera_pose, name='point-light1')
+        #self.scene.add(light1, pose=camera_pose, name='point-light1')
 
         light2 = PointLight(color=np.ones(3), intensity=5.0)
         pose2 = np.copy(camera_pose)
         pose2[2][3] = -0.5
-        self.scene.add(light2, pose=pose2, name='point-light1')
+        #self.scene.add(light2, pose=pose2, name='point-light1')
 
         self.figsize = (width, height)
 

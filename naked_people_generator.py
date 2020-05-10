@@ -25,8 +25,8 @@ def as_mesh(scene_or_mesh):
                 tuple(trimesh.Trimesh(vertices=g.vertices, faces=g.faces)
                     for g in scene_or_mesh.geometry.values()))
     else:
-        assert(isinstance(mesh, trimesh.Trimesh))
         mesh = scene_or_mesh
+        assert(isinstance(mesh, trimesh.Trimesh))
     return mesh
 
 class NakedPeopleGenarator:
@@ -79,6 +79,24 @@ class NakedPeopleGenarator:
         rotation_diff = rotate_to - rotation
         frames = len(poses)
 
+        living_trimesh = as_mesh(trimesh.load('integrated.ply'))
+
+        # Rotate & Move the object
+        apply_mesh_tranfsormations_([living_trimesh], trimesh.transformations.rotation_matrix(7 / 6 * pi, (0, 0, 1)))
+        living_trimesh.vertices[:, 1] += 1
+        living_trimesh.vertices[:, 2] -= 1
+        apply_mesh_tranfsormations_([living_trimesh], trimesh.transformations.rotation_matrix(pi, (0, 1, 0)))
+        apply_mesh_tranfsormations_([living_trimesh], trimesh.transformations.rotation_matrix(1 / 6 * pi, (0, 0, 1)))
+        apply_mesh_tranfsormations_([living_trimesh], trimesh.transformations.rotation_matrix(- 1 / 7 * pi, (1, 0, 0)))
+        living_trimesh.vertices[:, 0] += 2
+        living_trimesh.vertices[:, 1] -= 0.2
+        living_trimesh.vertices[:, 2] -= 1.7
+        living_trimesh.vertices *= 1.3
+        apply_mesh_tranfsormations_([living_trimesh], trimesh.transformations.rotation_matrix(-pi/6, (0, 1, 0)))
+        apply_mesh_tranfsormations_([living_trimesh], trimesh.transformations.rotation_matrix(1 / 18 * pi, (0, 0, 1)))
+        apply_mesh_tranfsormations_([living_trimesh], trimesh.transformations.rotation_matrix(rotation, (0, 1, 0)))
+        # End
+
         for fId in range(0, len(poses), frame_skip):
             f_rotation = rotation + rotation_diff / frames * fId
             f_translation = translation + translation_diff / frames * fId
@@ -88,11 +106,10 @@ class NakedPeopleGenarator:
             dmpl = dmpls[fId:fId + 1]
             body = bm(pose_body=pose_body, pose_hand = pose_hand, betas=betas, root_orient=root_orient)
             body_mesh_wfingers = trimesh.Trimesh(vertices=c2c(body.v[0]), faces=faces, vertex_colors=np.tile(colors[color], (6890, 1)))
-            living_trimesh = as_mesh(trimesh.load('living-room.glb'))
-            living_trimesh.visual.vertex_colors = np.tile(colors[bg_color], (24829, 1))
-            living_trimesh.vertices[:, 2] -= 1.3
+            #living_trimesh.visual.vertex_colors = np.tile(colors[bg_color], (24829, 1))
+            #living_trimesh.vertices[:, 2] -= 1.3
             apply_mesh_tranfsormations_([body_mesh_wfingers], trimesh.transformations.rotation_matrix(- pi / 1.9, (1, 0, 0)))
-            apply_mesh_tranfsormations_([body_mesh_wfingers, living_trimesh], trimesh.transformations.rotation_matrix(f_rotation, (0, 1, 0)))
+            apply_mesh_tranfsormations_([body_mesh_wfingers], trimesh.transformations.rotation_matrix(rotation, (0, 1, 0)))
             basepoint = body_mesh_wfingers.vertices[:, 2].max().item()
             ground = body_mesh_wfingers.vertices[:, 1].min().item()
             measure = (body_mesh_wfingers.vertices[:, 1].max().item() - ground)
@@ -100,8 +117,8 @@ class NakedPeopleGenarator:
             body_mesh_wfingers.vertices[:, 2] -= basepoint
             body_mesh_wfingers.vertices *= scale
             body_mesh_wfingers.vertices[:, 2] += basepoint
-            body_mesh_wfingers.vertices[:, :2] += f_translation * measure
-            living_trimesh.vertices[:, :2] += f_translation * measure
+            #body_mesh_wfingers.vertices[:, :2] += f_translation * measure
+            #living_trimesh.vertices[:, :2] += f_translation * measure
             mv.set_static_meshes([body_mesh_wfingers, living_trimesh])
             body_image_wfingers = mv.render(render_wireframe=False)
             writer.writeFrame(body_image_wfingers)
