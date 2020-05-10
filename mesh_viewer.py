@@ -27,6 +27,7 @@ import trimesh
 import pyrender
 import sys
 import cv2
+from pyrender.light import PointLight
 
 __all__ = ['MeshViewer']
 
@@ -43,10 +44,18 @@ class MeshViewer(object):
 
         self.scene = pyrender.Scene(ambient_light=(0.3, 0.3, 0.3))
 
-        pc = pyrender.PerspectiveCamera(yfov=np.pi / 3.0, aspectRatio=float(width) / height)
+        pc = pyrender.PerspectiveCamera(yfov=np.pi / 3.0 * 1.4, aspectRatio=float(width) / height)
         camera_pose = np.eye(4)
-        camera_pose[:3, 3] = np.array([0, 0, 2.5])
+        camera_pose[:3, 3] = np.array([0, 1.5, 1.75])
         self.camera_node = self.scene.add(pc, pose=camera_pose, name='pc-camera')
+
+        light1 = PointLight(color=np.ones(3), intensity=5.0)
+        self.scene.add(light1, pose=camera_pose, name='point-light1')
+
+        light2 = PointLight(color=np.ones(3), intensity=5.0)
+        pose2 = np.copy(camera_pose)
+        pose2[2][3] = -0.5
+        self.scene.add(light2, pose=pose2, name='point-light1')
 
         self.figsize = (width, height)
 
